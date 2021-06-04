@@ -1,0 +1,28 @@
+* {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: #77BFA3;
+}
+
+#branding {
+    padding: 4px 0px 4px 0px;
+}
+
+#branding > h1, h2 {
+    text-align: center;
+}
+
+#board {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    
+    grid-template-areas:
+                        "a b c"
+                        "d e f"
+                        "g h i";
+
+    grid-template-rows: repeat(3, 200px);
+    grid-template-columns: repeat(3, 200px);
+}
