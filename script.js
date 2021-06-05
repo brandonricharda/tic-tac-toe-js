@@ -1,11 +1,29 @@
+// var gameBoard = (function() {
+
+//     let board = document.getElementById("board");
+//     let cells = board.children;
+
+//     for(let i = 0; i < cells.length; i++) {
+//         cells[i].addEventListener("click", function() {
+//             console.log(cells[i]);
+//         });
+//     }
+
+// })();
+
 var gameBoard = (function() {
 
-    var positions = ["X", "O", "X", "O", "X", "O", "X", "O", "X"];
+    let positions = ["X", "O", "X", "O", "X", "O", "X", "O", "X"];
 
     return {
         printBoard: function() {
-            // Instead of console.log, we actually need to place the objects in the HTML game board
-            console.log(positions);
+            // Selects the HTML board (grid) and its inner divs
+            grid = document.getElementById("board");
+            cells = grid.children;
+            // Transfers markers from positions array to HTML board
+            for(let i = 0; i < cells.length; i++) {
+                cells[i].innerHTML = positions[i];
+            }
         }
     }
 
