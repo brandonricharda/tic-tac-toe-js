@@ -1,37 +1,43 @@
 var gameBoard = (function() {
-
-    let boardArray = new Array(9).fill(null);
-    // Selects the HTML board (grid) and its inner divs
+    let positions = new Array(9).fill(null);
     let cells = document.getElementById("board").children;
-
+    
     return {
-        // Accepts a positions array parameter
-        printBoard: function() {
-            // Transfers markers from positions array to HTML board
-            for(let i = 0; i < cells.length; i++) { cells[i].innerHTML = boardArray[i]; }
+        positions,
+        cells,
+        // Iterates through positions array and prints the results on the HTML display
+        print: function() {
+            for (let i = 0; i < cells.length; i++) { cells[i].innerHTML = positions[i] }
         },
-        // Accepts player marker ("X" || "O") and cell (0-8) as parameters
+        // Adds move to positions array if spot is empty
         addMove: function(marker, cell) {
-            if (boardArray[cell] != null) {
-                console.log("This spot has been taken!");
+            if (positions[cell] == null) {
+                positions[cell] = marker;
+                this.print();
             } else {
-                boardArray[cell] = marker;
-                this.printBoard();
+                console.log("This spot is already taken!");
             }
-        },
-        // Adds event listeners to cells (instantly executes on load)
-        _addListeners: function() {
-            // Iterates through cells and adds click event listeners
-            for(let i = 0; i < cells.length; i++) {
-                cells[i].addEventListener("click", function() {
-                    gameBoard.addMove("X", i);
-                });
-            }
-        }()
+        }
     }
 
-})();
+});
 
 const playerFactory = (name, marker) => {
-    
-};
+    // Makes player name and marker available to other modules
+    return { name, marker };
+}
+
+const game = (function() {
+    let board = gameBoard();
+    let players = [playerFactory("Player 1", "X"), playerFactory("Player 2", "O")];
+    // Sets current player to X to start the match
+    let currentPlayer = players[0];
+    // Adds event listeners to board
+    for (let i = 0; i < board.cells.length; i++) {
+        board.cells[i].addEventListener("click", function() {
+            board.addMove(currentPlayer.marker, i);
+            // Switch currentPlayer status to opposite player
+            currentPlayer = players.filter(player => player != currentPlayer)[0];
+        });
+    }
+});
