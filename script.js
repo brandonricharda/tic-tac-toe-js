@@ -20,8 +20,7 @@ var gameBoard = (function() {
             } else {
                 console.log("This spot is already taken!");
             }
-        },
-
+        }
     }
 
 });
@@ -36,9 +35,7 @@ const game = (function() {
     let players = [playerFactory("Player 1", "X"), playerFactory("Player 2", "O")];
 
     // See if all elements in array are equal
-    let threeInARow = (array) => array.every(position => position == array[0]);
-    // See if no elements in array are null
-    let anyNull = (array) => array.some(position => position == null);
+    let threeInARow = (array) => array.every(cell => cell.innerHTML == array[0].innerHTML);
 
     let gameOver = function(i) {
         // Select all combinations from board's winningCombinations array that contain i
@@ -50,14 +47,14 @@ const game = (function() {
             // This variable will collect all values at index in the current loop array
             let smallerArray = []
             array.forEach(function(index) {
-                smallerArray.push(board.positions[index]);
+                smallerArray.push(board.cells[index]);
             });
             values.push(smallerArray);
-            // threeInARow(values) == true && anyNull(values) == false;
         });
         // Once the values array has been populated with the smaller chunks in the above loop
-        // We can check to see whether any of those smaller chunks represents a win
-        return values.some(positions => threeInARow(positions) == true && anyNull(positions) == false);
+        // We can check to see whether any arrays exist containing three equal values
+        // If the method returns an empty array, that means the game is not over
+        return values.filter(positions => threeInARow(positions) == true);
     }
 
     // Sets current player to X to start the match
@@ -68,9 +65,16 @@ const game = (function() {
         board.cells[i].addEventListener("click", function() {
             // Makes a move in the position the user clicked on
             board.addMove(currentPlayer.marker, i);
-            console.log(gameOver(i));
-            // Switch currentPlayer status to opposite player
-            // currentPlayer = players.filter(player => player != currentPlayer)[0];
+            // 
+            if (gameOver(i).length == 0) {
+                currentPlayer = players.filter(player => player != currentPlayer)[0];
+            } else {
+                console.log("Victory!");
+                // Highlights winning moves
+                gameOver(i)[0].forEach(function(cell) {
+                    cell.style.backgroundColor = "#EDEEC9";
+                });
+            }
         });
     }
 
