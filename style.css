@@ -42,18 +42,32 @@
 }
 
 #controls {
+    display: flex;
+    flex-direction: column;
     margin-top: 20px;
+    justify-items: center;
+    align-items: center;
+}
+
+#controls button, input {
+    font-size: 20px;
+    box-shadow: none;
+    padding: 10px;
+    width: 300px;
+    margin-bottom: 10px;
+    border: 0;
     text-align: center;
+    background-color:#BFD8BD;
 }
 
 #controls button {
-    font-size: 20px;
-    background-color: #BFD8BD;
     border: 0;
-    box-shadow: none;
-    padding: 10px;
 }
 
-#controls button:hover {
+#controls input:focus {
+    outline: none;
+}
+
+#controls button:hover, input:focus {
     background-color: #98C9A3;
 }
