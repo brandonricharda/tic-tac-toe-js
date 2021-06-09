@@ -11,6 +11,10 @@
     text-align: center;
 }
 
+#branding > h2 {
+    font-size: 18px;
+}
+
 #board {
     display: grid;
     justify-content: center;
@@ -35,4 +39,21 @@
 
 .board-cell:hover {
     background-color: #BFD8BD;
+}
+
+#controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#controls button {
+    font-size: 20px;
+    background-color: #BFD8BD;
+    border: 0;
+    box-shadow: none;
+    padding: 10px;
+}
+
+#controls button:hover {
+    background-color: #98C9A3;
 }
