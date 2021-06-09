@@ -32,7 +32,24 @@ const playerFactory = (name, marker) => {
 
 const game = (function() {
     let board = gameBoard();
-    let players = [playerFactory("Player 1", "X"), playerFactory("Player 2", "O")];
+    // Selects player name input fields
+    let playerOneInput = document.getElementById("player-one-name");
+    let playerTwoInput = document.getElementById("player-two-name");
+    // This array will contain the player objects created for the game
+    let players = [];
+    let markers = ["X", "O"];
+    // For playerOne and playerTwo...
+    [playerOneInput, playerTwoInput].forEach(function(player, index) {
+        // If the player name input value is blank...
+        if (player.value == "") {
+            // Just name the player Player {index + 1} (which will be Player 1 or Player 2)
+            players.push(playerFactory(`Player ${index + 1}`, markers[index]));
+        } else {
+            // If the player's name input is filled, name the player accordingly
+            players.push(playerFactory(player.value, markers[index]));
+        }
+    });
+
     // Sets current player to X to start the match
     let currentPlayer = players[0];
 
