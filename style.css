@@ -43,9 +43,9 @@
 
 #controls {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     margin-top: 20px;
-    justify-items: center;
+    justify-content: center;
     align-items: center;
 }
 
@@ -70,4 +70,18 @@
 
 #controls button:hover, input:focus {
     background-color: #98C9A3;
+}
+
+@media screen and (max-width: 990px) {
+    #controls {
+        flex-direction: column;
+    }
+
+    #controls button {
+        width: 100%;
+    }
+
+    #controls input {
+        width: 100%;
+    }
 }
