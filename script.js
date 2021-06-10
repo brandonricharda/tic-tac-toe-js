@@ -90,16 +90,12 @@ const game = (function() {
                         console.log("Victory!");
                         // Highlights winning moves
                         highlightWinner(gameOver(i)[0]);
+                        // Deactivate all cells
                     }
-                    board.cells[i].removeEventListener("click", _listener, true);
                 }
             });
         }
     };
-
-    let end = function() {
-
-    }
 
     // Makes the start button functional
     let configureStartButton = function() {
