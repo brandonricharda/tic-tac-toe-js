@@ -1,4 +1,4 @@
-var gameBoard = (function() {
+const gameBoard = (function() {
     let positions = new Array(9).fill(null);
     let cells = document.getElementById("board").children;
     // These are all the possible index combinations in the positions array that would suggest a win
@@ -17,8 +17,9 @@ var gameBoard = (function() {
             if (positions[cell] == null) {
                 positions[cell] = marker;
                 this.print();
+                return true;
             } else {
-                console.log("This spot is already taken!");
+                return false;
             }
         }
     }
@@ -26,7 +27,6 @@ var gameBoard = (function() {
 });
 
 const playerFactory = (name, marker) => {
-    // Makes player name and marker available to other modules
     return { name, marker };
 }
 
@@ -76,19 +76,13 @@ const game = (function() {
         return values.filter(positions => threeInARow(positions) == true);
     }
 
-    let highlightWinner = function(cells) {
-        cells.forEach(function(cell) {
-            cell.style.backgroundColor = "#EDEEC9";
-        });
-    }
-
-    return {
-        start: function() {
-            for (let i = 0; i < board.cells.length; i++) {
-                // Adds click event listeners to board
-                board.cells[i].addEventListener("click", function() {
-                    // Makes a move in the position the user clicked on
-                    board.addMove(currentPlayer.marker, i);
+    let start = function() {
+        for (let i = 0; i < board.cells.length; i++) {
+            // Adds click event listeners to board
+            board.cells[i].addEventListener("click", function _listener() {
+                // If board.addMove returns true, that means a move was successfully added
+                // It would fail if an attempt was made to add a duplicate move
+                if (board.addMove(currentPlayer.marker, i)) {
                     // If the gameOver array is empty, that means it contains no arrays representing a win
                     if (gameOver(i).length == 0) {
                         currentPlayer = players.filter(player => player != currentPlayer)[0];
@@ -97,9 +91,28 @@ const game = (function() {
                         // Highlights winning moves
                         highlightWinner(gameOver(i)[0]);
                     }
-                });
-            }
+                    board.cells[i].removeEventListener("click", _listener, true);
+                }
+            });
         }
+    };
+
+    let end = function() {
+
     }
 
-});
+    // Makes the start button functional
+    let configureStartButton = function() {
+        let startButton = document.getElementById("start-button");
+        startButton.addEventListener("click", function() {
+            start();
+        });
+    }();
+
+    let highlightWinner = function(cells) {
+        cells.forEach(function(cell) {
+            cell.style.backgroundColor = "#EDEEC9";
+        });
+    }
+
+})();
