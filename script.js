@@ -81,7 +81,6 @@ const pairOfPlayers = (function() {
 });
 
 const game = (function() {
-    let board = gameBoard();
 
     let updateCommunications = function(player, mode) {
         let communications = document.getElementById("main-message");
@@ -105,6 +104,11 @@ const game = (function() {
             restartButton.addEventListener("click", function() {
                 location.reload();
             });
+        } else if (mode == "start") {
+            let startButton = document.getElementById("start-button");
+            startButton.addEventListener("click", function() {
+                start();
+            });
         }
     }
 
@@ -114,6 +118,7 @@ const game = (function() {
         let currentPlayer = opponents.players[0];
         updateControls("gamePlay");
         updateCommunications(currentPlayer.name, "startMatch");
+        // Adds event listeners that lets users click on cells to make moves
         for (let i = 0; i < board.cells.length; i++) {
             board.cells[i].addEventListener("click", function() {
                 if (board.addMove(currentPlayer.marker, i)) {
@@ -135,12 +140,7 @@ const game = (function() {
         }
     }
 
-    // Makes the start button functional
-    let configureStartButton = function() {
-        let startButton = document.getElementById("start-button");
-        startButton.addEventListener("click", function() {
-            start();
-        });
-    }();
+    let board = gameBoard();
+    updateControls("start");
 
 })();
