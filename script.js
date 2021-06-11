@@ -23,7 +23,8 @@ const gameBoard = (function() {
             }
         },
         highlightCell: function(cell) {
-            cell.style.backgroundColor = "#EDEEC9";
+            cell.style.backgroundColor = "#90E0EF";
+            cell.style.color = "black";
         },
         dimCell: function(cell) {
             cell.style.filter = "brightness(80%)";
@@ -128,7 +129,7 @@ const game = (function() {
                     } else {
                         board.winnerFound(i)[0].forEach(cell => board.highlightCell(cell));
                         for (let x = 0; x < board.cells.length; x++) {
-                            if (board.cells[x].style.backgroundColor != "rgb(237, 238, 201)") {
+                            if (board.cells[x].style.backgroundColor != "rgb(144, 224, 239)") {
                                 board.dimCell(board.cells[x]);
                             }
                         }
