@@ -44,17 +44,19 @@
 
 #controls {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin-top: 20px;
     justify-content: center;
     align-items: center;
+    /* width: 700px;
+    margin: 0 auto; */
 }
 
 #controls button, input {
     font-size: 20px;
     box-shadow: none;
     padding: 10px;
-    width: 300px;
+    width: 620px;
     margin-bottom: 10px;
     border: 0;
     text-align: center;
@@ -71,18 +73,4 @@
 
 #controls button:hover, input:focus {
     background-color: #98C9A3;
-}
-
-@media screen and (max-width: 990px) {
-    #controls {
-        flex-direction: column;
-    }
-
-    #controls button {
-        width: 100%;
-    }
-
-    #controls input {
-        width: 100%;
-    }
 }

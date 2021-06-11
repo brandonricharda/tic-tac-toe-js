@@ -82,16 +82,44 @@ const pairOfPlayers = (function() {
 
 const game = (function() {
     let board = gameBoard();
-    let opponents = pairOfPlayers();
-    // Sets current player to X to start the match
-    let currentPlayer = opponents.players[0];
+
+    let updateCommunications = function(player, mode) {
+        let communications = document.getElementById("main-message");
+        if (mode == "switch" || mode == "startMatch") {
+            communications.innerHTML = `${player}'s Turn`;
+        } else if (mode == "gameOver") {
+            communications.innerHTML = `${player} Wins`;
+        }
+    }
+
+    let updateControls = function(mode) {
+        let controls = document.getElementById("controls");
+        let playerOneName = document.getElementById("player-one-name");
+        let playerTwoName = document.getElementById("player-two-name");
+        let startButton = document.getElementById("start-button");
+        if (mode == "gamePlay") {
+            [playerOneName, playerTwoName, startButton].forEach(element => element.style.display = "none");
+            let restartButton = document.createElement("button");
+            restartButton.innerHTML = "Restart";
+            controls.appendChild(restartButton);
+            restartButton.addEventListener("click", function() {
+                location.reload();
+            });
+        }
+    }
 
     let start = function() {
+        let opponents = pairOfPlayers();
+        // Sets current player to X to start the match
+        let currentPlayer = opponents.players[0];
+        updateControls("gamePlay");
+        updateCommunications(currentPlayer.name, "startMatch");
         for (let i = 0; i < board.cells.length; i++) {
             board.cells[i].addEventListener("click", function() {
                 if (board.addMove(currentPlayer.marker, i)) {
                     if (board.winnerFound(i).length == 0) {
                         currentPlayer = opponents.switch(currentPlayer);
+                        updateCommunications(currentPlayer.name, "switch");
                     } else {
                         board.winnerFound(i)[0].forEach(cell => board.highlightCell(cell));
                         for (let x = 0; x < board.cells.length; x++) {
@@ -100,6 +128,7 @@ const game = (function() {
                             }
                         }
                         board.deactivate();
+                        updateCommunications(currentPlayer.name, "gameOver");
                     }
                 }
             });
