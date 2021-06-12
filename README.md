@@ -32,6 +32,8 @@ If you hit "Start Game" without setting a name for each player, the app will jus
 
 When you hit "Start Game," the board's cells will activate. A click will result in the current player's marker ("X" or "O") being placed in that cell. If the cell already contains a move, nothing will happen.
 
+As you play, text under the board will update to let users know who the current player is.
+
 ### Step 3: Restart the Game After a Win or Tie
 
 When the game is over (due to either a win or tie), you can restart it by clicking the "Restart" button in the controls section.
