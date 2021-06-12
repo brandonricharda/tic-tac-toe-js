@@ -60,12 +60,18 @@ const gameBoard = (function() {
             for (i = 0; i < cells.length; i++) {
                 values.push(cells[i].innerHTML);
             }
-            console.log(values);
             return values.every(value => value != "");
         },
         deactivate: function() {
             for (let i = 0; i < cells.length; i++) {
                 cells[i].style.pointerEvents = "none";
+            }
+        },
+        reset: function() {
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].style = "initial";
+                cells[i].innerHTML = "";
+                positions[i] = null;
             }
         }
     }
@@ -96,76 +102,139 @@ const pairOfPlayers = (function() {
     }
 });
 
-const game = (function() {
+const controls = (function() {
+    let container = document.getElementById("controls");
+    let playerOneInput = document.getElementById("player-one-name");
+    let playerTwoInput = document.getElementById("player-two-name");
+    let startButton = document.getElementById("start-button");
 
-    let updateCommunications = function(player, mode) {
-        let communications = document.getElementById("main-message");
-        if (mode == "switch" || mode == "startMatch") {
-            communications.innerHTML = `${player}'s Turn`;
-        } else if (mode == "gameOver") {
-            communications.innerHTML = `${player} Wins`;
-        } else if (mode == "tie") {
-            communications.innerHTML = "It's a Tie. Hit Restart";
+    return {
+        startButton,
+        playerOneInput,
+        playerTwoInput,
+        toggleDefaultInputs: function(mode) {
+            if (mode == "hide") {
+                [playerOneInput, playerTwoInput, startButton].forEach(element => element.style.display = "none");
+            } else if (mode == "show") {
+                [playerOneInput, playerTwoInput, startButton].forEach(element => element.style.display = "block");
+            }
+        },
+        toggleGameplayControls: function(mode) {
+            if (mode == "show") {
+                let restartButton = document.createElement("button");
+                restartButton.innerHTML = "Restart";
+                restartButton.setAttribute("id", "restart-button");
+                container.appendChild(restartButton);
+            } else if (mode == "hide") {
+                let restartButton = document.getElementById("restart-button");
+                restartButton.remove();
+            }
+        }
+    }
+    
+});
+
+const communications = (function() {
+    let message = document.getElementById("main-message");
+
+    return {
+        updateMessage: function(player, mode) {
+            if (mode == "switch" || mode == "startMatch") {
+                message.innerHTML = `${player}'s Turn`;
+            } else if (mode == "gameOver") {
+                message.innerHTML = `${player} Wins`;    
+            } else if (mode == "tie") {
+                message.innerHTML = "It's a Tie. Hit Restart";    
+            } else if (mode == "splash") {
+                message.innerHTML = "Get Started";
+            }
         }
     }
 
-    let updateControls = function(mode) {
-        let controls = document.getElementById("controls");
-        let playerOneName = document.getElementById("player-one-name");
-        let playerTwoName = document.getElementById("player-two-name");
-        let startButton = document.getElementById("start-button");
-        if (mode == "gamePlay") {
-            [playerOneName, playerTwoName, startButton].forEach(element => element.style.display = "none");
-            let restartButton = document.createElement("button");
-            restartButton.innerHTML = "Restart";
-            controls.appendChild(restartButton);
-            restartButton.addEventListener("click", function() {
-                location.reload();
-            });
-        } else if (mode == "start") {
-            let startButton = document.getElementById("start-button");
-            startButton.addEventListener("click", function() {
-                start();
-            });
+});
+
+const game = (function() {
+
+    let board = gameBoard();
+    let opponents = null;
+    let currentPlayer = null;
+    let controller = controls();
+    let message = communications();
+
+    let tieSequence = function(player) {
+        board.deactivate();
+        message.updateMessage(player, "tie");
+        board.dimAllCells();
+    }
+
+    let switchTurns = function(player) {
+        currentPlayer = opponents.switch(player);
+        message.updateMessage(currentPlayer.name, "switch");
+    }
+
+    let gameOverSequence = function(player, i) {
+        board.winnerFound(i)[0].forEach(cell => board.highlightCell(cell));
+        for (let x = 0; x < board.cells.length; x++) {
+            if (board.cells[x].style.backgroundColor != "rgb(144, 224, 239)") {
+                board.dimCell(board.cells[x]);
+            }
         }
+        board.deactivate();
+        message.updateMessage(currentPlayer.name, "gameOver");
+    }
+
+    let identifyNextStep = function(currentPlayer, i) {
+        if (board.addMove(currentPlayer.marker, i)) {
+            if (board.winnerFound(i).length == 0) {
+                if (board.tie()) {
+                    tieSequence(currentPlayer.name);
+                } else {
+                    switchTurns(currentPlayer);
+                }
+            } else {
+                gameOverSequence(currentPlayer, i);
+            }
+        }
+    }
+
+    let setControlsForGameStart = function() {
+        controller.toggleDefaultInputs("hide");
+        controller.toggleGameplayControls("show");
+    }
+
+    let setMessageForGameStart = function() {
+        message.updateMessage(currentPlayer.name, "switch");
+    }
+
+    let activateRestartButton = function() {
+        let restartButton = document.getElementById("restart-button");
+        restartButton.addEventListener("click", function() {
+            board.reset();
+            opponents = pairOfPlayers();
+            currentPlayer = opponents.players[0];
+            setMessageForGameStart();
+        });
     }
 
     let start = function() {
-        let opponents = pairOfPlayers();
-        // Sets current player to X to start the match
-        let currentPlayer = opponents.players[0];
-        updateControls("gamePlay");
-        updateCommunications(currentPlayer.name, "startMatch");
-        // Adds event listeners that lets users click on cells to make moves
+        opponents = pairOfPlayers();
+        currentPlayer = opponents.players[0];
+        setControlsForGameStart();
+        setMessageForGameStart();
+        activateRestartButton();
+        activateBoard();
+    }
+
+    let activateBoard = function() {
         for (let i = 0; i < board.cells.length; i++) {
             board.cells[i].addEventListener("click", function() {
-                if (board.addMove(currentPlayer.marker, i)) {
-                    if (board.winnerFound(i).length == 0) {
-                        if (board.tie()) {
-                            board.deactivate();
-                            updateCommunications(currentPlayer.name, "tie");
-                            board.dimAllCells();
-                        } else {
-                            console.log(board.tie());
-                            currentPlayer = opponents.switch(currentPlayer);
-                            updateCommunications(currentPlayer.name, "switch");
-                        }
-                    } else {
-                        board.winnerFound(i)[0].forEach(cell => board.highlightCell(cell));
-                        for (let x = 0; x < board.cells.length; x++) {
-                            if (board.cells[x].style.backgroundColor != "rgb(144, 224, 239)") {
-                                board.dimCell(board.cells[x]);
-                            }
-                        }
-                        board.deactivate();
-                        updateCommunications(currentPlayer.name, "gameOver");
-                    }
-                }
+                identifyNextStep(currentPlayer, i);
             });
         }
     }
 
-    let board = gameBoard();
-    updateControls("start");
+    controller.startButton.addEventListener("click", function() {
+        start();
+    });
 
 })();
