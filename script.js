@@ -29,6 +29,13 @@ const gameBoard = (function() {
         dimCell: function(cell) {
             cell.style.filter = "brightness(80%)";
         },
+        dimAllCells: function() {
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].style.backgroundColor != "rgb(144, 224, 239)") {
+                    this.dimCell(cells[i]);
+                }
+            }
+        },
         // Determines whether an array represents three equal moves in a row (a win)
         threeInARow: function(array) {
             return array.every(cell => cell.innerHTML == array[0].innerHTML);
@@ -38,7 +45,7 @@ const gameBoard = (function() {
             return winningCombinations.filter(array => array.includes(i));
         },
         winnerFound: function(i) {
-            let values = []
+            let values = [];
             this.positionsToCheck(i).forEach(function (array) {
                 let smallerArray = [];
                 array.forEach(function(index) {
@@ -47,6 +54,14 @@ const gameBoard = (function() {
                 values.push(smallerArray);
             });
             return values.filter(positions => this.threeInARow(positions) == true);
+        },
+        tie: function() {
+            let values = [];
+            for (i = 0; i < cells.length; i++) {
+                values.push(cells[i].innerHTML);
+            }
+            console.log(values);
+            return values.every(value => value != "");
         },
         deactivate: function() {
             for (let i = 0; i < cells.length; i++) {
@@ -89,6 +104,8 @@ const game = (function() {
             communications.innerHTML = `${player}'s Turn`;
         } else if (mode == "gameOver") {
             communications.innerHTML = `${player} Wins`;
+        } else if (mode == "tie") {
+            communications.innerHTML = "It's a Tie. Hit Restart";
         }
     }
 
@@ -124,8 +141,15 @@ const game = (function() {
             board.cells[i].addEventListener("click", function() {
                 if (board.addMove(currentPlayer.marker, i)) {
                     if (board.winnerFound(i).length == 0) {
-                        currentPlayer = opponents.switch(currentPlayer);
-                        updateCommunications(currentPlayer.name, "switch");
+                        if (board.tie()) {
+                            board.deactivate();
+                            updateCommunications(currentPlayer.name, "tie");
+                            board.dimAllCells();
+                        } else {
+                            console.log(board.tie());
+                            currentPlayer = opponents.switch(currentPlayer);
+                            updateCommunications(currentPlayer.name, "switch");
+                        }
                     } else {
                         board.winnerFound(i)[0].forEach(cell => board.highlightCell(cell));
                         for (let x = 0; x < board.cells.length; x++) {
