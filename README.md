@@ -1,6 +1,6 @@
 # README
 
-**Deployed Version:**
+**Deployed Version:** https://brandonricharda.github.io/tic-tac-toe-js/
 
 https://user-images.githubusercontent.com/57069036/121786782-1c922100-cb90-11eb-8469-870c715b8a62.mp4
 
