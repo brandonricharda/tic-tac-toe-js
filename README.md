@@ -39,3 +39,5 @@ As you play, text under the board will update to let users know who the current 
 When the game is over (due to either a win or tie), you can restart it by clicking the "Restart" button in the controls section.
 
 If the game ends due to a win, the winning path will be highlighted and the board will become non-interactive.
+
+**Note:** If you would like to restart the game with new players, simply refresh the page. This will return the app to its original state, including two name input fields.
